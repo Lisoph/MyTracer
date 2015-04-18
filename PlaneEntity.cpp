@@ -1,5 +1,7 @@
 #include "PlaneEntity.hpp"
 
+#include <SDL.h>
+
 static Eigen::Matrix4f Mat3to4(Eigen::Matrix3f const &mat3)
 {
   Eigen::Matrix4f mat4 = Eigen::Matrix4f::Identity();
@@ -36,29 +38,25 @@ namespace MyTracer
 
     Eigen::Vector3f PlaneEntity::GetDiffuseAt(Eigen::Vector3f const &relativePos)
     {
-      //return mDiffuse;
-
-#if 1
-      Eigen::Vector3f a = mNormal;
-      Eigen::Vector3f b = Eigen::Vector3f::UnitZ();
-
-      Eigen::Vector3f v = a.cross(b);
+      Eigen::Vector3f texturePlaneOrtho = Eigen::Vector3f::UnitZ();     // The normal vector that is orthogonal to the 2D 'texture' plane.
+      Eigen::Vector3f rotationAxis = mNormal.cross(texturePlaneOrtho);  // It determines on which axes the relativePos should be projected on.
       
-      float c = a.dot(b);
-      float angle = std::acos(c);
+      float angle = std::acos(mNormal.dot(texturePlaneOrtho));
+      Eigen::Matrix4f rotMat = QuatRotMatrix4(Eigen::Quaternionf(Eigen::AngleAxisf(angle, rotationAxis)));
 
-      Eigen::Matrix4f rotMat = QuatRotMatrix4(Eigen::Quaternionf(Eigen::AngleAxisf(angle, Eigen::Vector3f(v))));
-      rotMat *= QuatRotMatrix4(Eigen::Quaternionf(Eigen::AngleAxisf(1.0f, Eigen::Vector3f(0, 1, 0))));
+      float const extraRot = SDL_GetTicks() / 1000.0f * 0.05f;
+      auto const extraRotMat = QuatRotMatrix4(Eigen::Quaternionf(Eigen::AngleAxisf(extraRot, Eigen::Vector3f::UnitY())));
+      rotMat *= extraRotMat;
+
       auto v4 = Eigen::Vector4f(relativePos(0), relativePos(1), relativePos(2), 1);
       auto vnew = rotMat * v4;
 
       auto x = int(std::round(vnew(0) / 4));
       auto y = int(std::round(vnew(1) / 4));
 
-      if(x % 2 == 0 && y % 2 == 0)
+      if((x + y) % 2 == 0)
         return {0, 1, 0};
       return {1, 1, 0};
-#endif
     }
   }
 }
