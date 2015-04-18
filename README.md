@@ -1,5 +1,4 @@
 # MyTracer
----
 
 ![MyTracer Showcase](http://i.imgur.com/JAm78jR.png "MyTracer in action")
 
