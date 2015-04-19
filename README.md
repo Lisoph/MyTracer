@@ -2,8 +2,6 @@
 
 ![MyTracer Showcase](http://i.imgur.com/9E5DBT6.png "MyTracer in action")
 
-![MyTracer Showcase](http://i.imgur.com/YgwDdIZ.gif "Please ignore the GIF artefacts!")
-
 ... or watch [this (outdated) YouTube video](https://youtu.be/TZcdsGm4tW4)!
 
 ## Compilation
